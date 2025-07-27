@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAZER Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Ring overlay that appears when power is on -->
+    <div class="ring-overlay" id="ring-overlay">
+        <div class="ring" id="ring"></div>
+    </div>
+
+    <div class="container">
+        <div class="control-panel">
+            <!-- Header -->
+            <div class="header">
+                <div class="brightness-icon">☀️</div>
+                <div class="title">Ring Control Panel</div>
+                <div class="window-controls">
+                    <div class="control-btn settings" id="settings-btn">⚙️</div>
+                    <div class="control-btn minimize" id="minimize-btn">─</div>
+                    <div class="control-btn close" id="close-btn">✕</div>
+                </div>
+            </div>
+
+            <!-- Monitor Selection -->
+            <div class="monitor-section">
+                <div class="monitor-label">Monitor:</div>
+                <select class="monitor-select" id="monitor-select">
+                    <option value="primary">Primary Display</option>
+                    <option value="all">All Displays</option>
+                </select>
+            </div>
+
+            <!-- Main Control Area -->
+            <div class="main-controls" onclick="console.log('main-controls clicked')">
+                <!-- Left Slider - Brightness (Vertical) -->
+                <div class="slider-container left-slider vertical">
+                    <div class="slider-track">
+                        <div class="slider-fill" id="brightness-fill"></div>
+                        <div class="slider-thumb" id="brightness-thumb"></div>
+                    </div>
+                    <div class="slider-value" id="brightness-value">100%</div>
+                    <div class="tooltip" id="brightness-tooltip">Brightness</div>
+                </div>
+
+                <!-- Center Power Button -->
+                <div class="power-section">
+                    <div class="power-button" id="power-btn">
+                        <div class="power-icon">⏻</div>
+                    </div>
+                    <div class="power-status">OFF</div>
+                </div>
+
+                <!-- Right Slider - Thickness (Vertical) -->
+                <div class="slider-container right-slider vertical">
+                    <div class="slider-track">
+                        <div class="slider-fill" id="thickness-fill"></div>
+                        <div class="slider-thumb" id="thickness-thumb"></div>
+                    </div>
+                    <div class="slider-value" id="thickness-value">50%</div>
+                    <div class="tooltip" id="thickness-tooltip">Thickness</div>
+                </div>
+
+                <!-- Ring Size Slider (Horizontal) -->
+                <div class="slider-container size-slider horizontal">
+                    <div class="slider-track"">
+                        <div class="slider-fill" id="size-fill"></div>
+                        <div class="slider-thumb" id="size-thumb"></div>
+                    </div>
+                    <div class="slider-value" id="size-value">25%</div>
+                    <div class="tooltip" id="size-tooltip">Ring Size</div>
+                </div>
+
+                <!-- Bottom Slider - Color Warmth (U-shaped) -->
+                <div class="slider-container bottom-slider horizontal">
+                    <div class="slider-track">
+                        <svg width="200" height="30" viewBox="0 0 200 30">
+                            <defs>
+                                <linearGradient id="warmthGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#0000ff"/>
+                                    <stop offset="50%" style="stop-color:#ffffff"/>
+                                    <stop offset="100%" style="stop-color:#ff0000"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Straight horizontal bar with rounded ends -->
+                            <rect x="10" y="10" width="180" height="10" rx="5" ry="5" 
+                                  fill="url(#warmthGradient)"/>
+                        </svg>
+                        <div class="slider-thumb" id="warmth-thumb"></div>
+                    </div>
+                    <div class="slider-value" id="warmth-value">50%</div>
+                    <div class="tooltip" id="warmth-tooltip">Color Warmth</div>
+                </div>
+
+                <!-- PayPal Support Button -->
+                <div class="paypal-support-container">
+                    <button class="paypal-support-btn" id="paypal-support-btn" onclick="openPayPal()">
+                        <div class="paypal-icon">💙</div>
+                        <span class="paypal-text">Support Me</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

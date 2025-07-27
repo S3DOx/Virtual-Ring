@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            overflow: hidden;
+            user-select: none;
+            pointer-events: none;
+            /* Make body completely transparent to mouse events */
+            background-color: transparent;
+        }
+
+        .ring-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            pointer-events: none;
+            overflow: hidden;
+            /* Ensure the overlay is visible */
+            z-index: 9999;
+            background: transparent;
+        }
+
+        /* Outer ring area - only the outer border is interactive */
+        .ring-outer-area {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            pointer-events: auto;
+            cursor: move;
+            z-index: 10002;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: transparent;
+            border: 20px solid transparent;
+            box-sizing: border-box;
+        }
+
+        /* Inner ring area - creates a hole in the middle */
+        .ring-inner-area {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: transparent;
+            border: none;
+            box-sizing: border-box;
+        }
+
+
+
+        .ring {
+            width: 300px;
+            height: 300px;
+            border: 8px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+            cursor: move;
+            user-select: none;
+            pointer-events: none;
+            /* Make ring completely transparent in center */
+            background: transparent;
+        }
+
+        .ring-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            border: inherit;
+        }
+
+        .ring.dragging {
+            transition: none;
+            cursor: grabbing;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="ring-overlay">
+        <div class="ring" id="ring"></div>
+        <div class="ring-outer-area" id="ring-outer-area"></div>
+        <div class="ring-inner-area" id="ring-inner-area"></div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        const ring = document.getElementById('ring');
+        const ringOuterArea = document.getElementById('ring-outer-area');
+        const ringInnerArea = document.getElementById('ring-inner-area');
+        
+        console.log('Overlay window loaded, ring element:', ring);
+        console.log('Ring element found:', !!ring);
+        console.log('Ring outer area element found:', !!ringOuterArea);
+        console.log('Ring inner area element found:', !!ringInnerArea);
+
+        // Listen for ring property updates
+        ipcRenderer.on('update-ring', (event, properties) => {
+            console.log('Overlay received ring properties update:', properties);
+            
+            if (properties.thickness !== undefined) {
+                const borderWidth = Math.max(2, Math.min(200, (properties.thickness / 100) * 200));
+                ring.style.borderWidth = `${borderWidth}px`;
+                console.log(`Overlay ring border width set to: ${borderWidth}px`);
+            }
+            
+            if (properties.brightness !== undefined) {
+                const opacity = Math.max(0.1, Math.min(1, properties.brightness / 100));
+                ring.style.opacity = opacity;
+                console.log(`Overlay ring opacity set to: ${opacity}`);
+            }
+            
+            if (properties.size !== undefined) {
+                const size = Math.max(100, Math.min(1500, (properties.size / 100) * 1500));
+                const holeSize = Math.max(60, Math.min(900, (properties.size / 100) * 900));
+                ring.style.width = `${size}px`;
+                ring.style.height = `${size}px`;
+                ringOuterArea.style.width = `${size}px`;
+                ringOuterArea.style.height = `${size}px`;
+                ringInnerArea.style.width = `${holeSize}px`;
+                ringInnerArea.style.height = `${holeSize}px`;
+                console.log(`Overlay ring size set to: ${size}px`);
+            }
+            
+            if (properties.color !== undefined) {
+                ring.style.borderColor = properties.color;
+                console.log(`Overlay ring color set to: ${properties.color}`);
+            }
+            
+            if (properties.warmth !== undefined) {
+                // Log the warmth value for debugging
+                console.log(`Overlay received warmth value: ${properties.warmth}`);
+            }
+        });
+
+        // Also listen for the test message from main process
+        ipcRenderer.on('test-message', (event, data) => {
+            console.log('Overlay received test message:', data);
+        });
+
+        // Log when the overlay window is ready
+        console.log('Overlay window script loaded and ready');
+        
+        // Log screen dimensions
+        console.log('Screen dimensions:', window.screen.width, 'x', window.screen.height);
+        console.log('Viewport dimensions:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Set initial ring properties for visibility
+        ring.style.borderWidth = '4px'; // Set initial thickness to 50% (4px out of 8px max)
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.9)'; // Set initial color (will be updated by properties)
+
+        ring.style.width = '300px'; // Set initial size
+        ring.style.height = '300px'; // Set initial size
+        ringOuterArea.style.width = '300px'; // Set initial outer ring area size
+        ringOuterArea.style.height = '300px'; // Set initial outer ring area size
+        ringInnerArea.style.width = '260px'; // Set initial hole size
+        ringInnerArea.style.height = '260px'; // Set initial hole size
+        console.log('Initial ring properties set');
+        
+        // Debug: Check if elements are visible
+        console.log('Ring element dimensions:', ring.offsetWidth, 'x', ring.offsetHeight);
+        console.log('Ring outer area element dimensions:', ringOuterArea.offsetWidth, 'x', ringOuterArea.offsetHeight);
+        console.log('Ring element position:', ring.offsetLeft, ring.offsetTop);
+        console.log('Ring outer area element position:', ringOuterArea.offsetLeft, ringOuterArea.offsetTop);
+        
+        // Drag functionality
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let initialRingX = 0;
+        let initialRingY = 0;
+
+        ringOuterArea.addEventListener('mousedown', (e) => {
+            console.log('Ring outer area mousedown detected!');
+            
+            isDragging = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            
+            const rect = ring.getBoundingClientRect();
+            initialRingX = rect.left + rect.width / 2;
+            initialRingY = rect.top + rect.height / 2;
+            
+            ring.classList.add('dragging');
+            ringOuterArea.classList.add('dragging');
+            
+            console.log('Dragging started at:', dragStartX, dragStartY);
+            console.log('Initial ring position:', initialRingX, initialRingY);
+            
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        // Add a simple click test
+        ringOuterArea.addEventListener('click', (e) => {
+            console.log('Ring outer area clicked!');
+        });
+
+        // Enable mouse events when hovering over ring area
+        ringOuterArea.addEventListener('mouseenter', (e) => {
+            console.log('Mouse entered ring outer area');
+            ipcRenderer.invoke('enable-mouse-events').then(result => {
+                console.log('Mouse events enabled on hover:', result);
+            }).catch(error => {
+                console.error('Error enabling mouse events on hover:', error);
+            });
+        });
+
+        // Disable mouse events when leaving ring area
+        ringOuterArea.addEventListener('mouseleave', (e) => {
+            console.log('Mouse left ring outer area');
+            ipcRenderer.invoke('disable-mouse-events').then(result => {
+                console.log('Mouse events disabled on leave:', result);
+            }).catch(error => {
+                console.error('Error disabling mouse events on leave:', error);
+            });
+        });
+
+
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                console.log('Mouse move while dragging:', e.clientX, e.clientY);
+                
+                const deltaX = e.clientX - dragStartX;
+                const deltaY = e.clientY - dragStartY;
+                
+                const newX = initialRingX + deltaX;
+                const newY = initialRingY + deltaY;
+                
+                ring.style.left = `${newX}px`;
+                ring.style.top = `${newY}px`;
+                ring.style.transform = 'translate(-50%, -50%)';
+                
+                // Also move the ring area elements
+                ringOuterArea.style.left = `${newX}px`;
+                ringOuterArea.style.top = `${newY}px`;
+                ringOuterArea.style.transform = 'translate(-50%, -50%)';
+                
+                ringInnerArea.style.left = `${newX}px`;
+                ringInnerArea.style.top = `${newY}px`;
+                ringInnerArea.style.transform = 'translate(-50%, -50%)';
+                
+
+                
+                console.log('Ring moved to:', newX, newY);
+                
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (isDragging) {
+                isDragging = false;
+                ring.classList.remove('dragging');
+                ringOuterArea.classList.remove('dragging');
+                
+                console.log('Ring dragging stopped');
+            }
+        });
+
+        // Always set ring to center of screen
+        setRingToCenter();
+        
+        // Function to set ring to center of screen
+        function setRingToCenter() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            ring.style.left = `${centerX}px`;
+            ring.style.top = `${centerY}px`;
+            ring.style.transform = 'translate(-50%, -50%)';
+            
+            // Also update ring area positions
+            ringOuterArea.style.left = `${centerX}px`;
+            ringOuterArea.style.top = `${centerY}px`;
+            ringOuterArea.style.transform = 'translate(-50%, -50%)';
+            ringInnerArea.style.left = `${centerX}px`;
+            ringInnerArea.style.top = `${centerY}px`;
+            ringInnerArea.style.transform = 'translate(-50%, -50%)';
+            
+            console.log('Ring positioned at center:', centerX, centerY);
+        }
+    </script>
+</body>
+</html> 

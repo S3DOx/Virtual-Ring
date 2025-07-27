@@ -1,0 +1,57 @@
+{
+  "name": "ring-control-app",
+  "version": "1.0.0",
+  "description": "A modern control panel with sliders for thickness, color warmth, and brightness",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "web": "npx http-server -p 3000 -o"
+  },
+  "keywords": [
+    "control-panel",
+    "control-panel",
+    "slider",
+    "ui",
+    "desktop-app",
+    "electron"
+  ],
+  "author": "S3DOx",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {},
+  "build": {
+    "appId": "com.s3dox.controlapp",
+    "productName": "Ring Control Panel",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "!dist/**/*",
+      "!*.log"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  }
+} 
