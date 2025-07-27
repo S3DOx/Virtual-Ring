@@ -1,8 +1,8 @@
 # Ring Control Panel App
 
-A modern, responsive desktop application with interactive sliders for controlling thickness, color warmth, and brightness. Built with Electron for cross-platform desktop support.
+A modern, responsive desktop application with interactive sliders for controlling thickness, color warmth, and brightness. Built with Electron and currently optimized for Windows systems.
 
-![Ring Control Panel](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![Ring Control Panel](https://img.shields.io/badge/Platform-Windows-blue)
 ![Electron](https://img.shields.io/badge/Built%20with-Electron-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
@@ -17,9 +17,8 @@ A modern, responsive desktop application with interactive sliders for controllin
   - **Color Warmth Slider**: Control color temperature
 - **Power Control**: Toggle ring overlay on/off
 - **Multi-Monitor Support**: Control primary display or all displays
-- **PayPal Support**: Built-in support button for donations
 - **Responsive Design**: Works on different screen sizes
-- **Cross-Platform**: Windows, macOS, and Linux support
+- **Windows Support**: Currently optimized for Windows systems
 
 ## 📸 Screenshots
 
@@ -36,7 +35,7 @@ A modern, responsive desktop application with interactive sliders for controllin
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/ring-control-app.git
+   git clone https://github.com/S3DOx/ring-control-app.git
    cd ring-control-app
    ```
 
@@ -215,13 +214,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Electron](https://electronjs.org/)
 - Inspired by modern control panel designs
-- PayPal integration for support
 
 ## 📞 Support
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](https://github.com/yourusername/ring-control-app/issues) page
+1. Check the [Issues](https://github.com/S3DOx/ring-control-app/issues) page
 2. Create a new issue with detailed information
 3. Include your operating system and Node.js version
 
@@ -232,10 +230,9 @@ If you encounter any issues or have questions:
 - Basic slider controls
 - Ring overlay functionality
 - Multi-monitor support
-- PayPal integration
 
 ---
 
-**Made with ❤️ by [Your Name]**
+**Made with ❤️ by [S3DOx]**
 
 *If this project helps you, consider supporting it with a donation via the PayPal button in the app!* 
