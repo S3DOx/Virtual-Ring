@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
         };
     },
     
+    // Display management
+    getDisplays: () => ipcRenderer.invoke('get-displays'),
+    
     // External URL handling
     openExternal: (url) => ipcRenderer.invoke('open-external', url)
 });

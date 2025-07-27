@@ -134,6 +134,10 @@ class RingControlApp {
         this.monitorSelect = document.getElementById('monitor-select');
         this.selectedMonitor = 'primary'; // Default to primary display
         
+        console.log('Initializing monitor selection...');
+        console.log('Is Electron:', this.isElectron);
+        console.log('ElectronAPI available:', !!window.electronAPI);
+        
         // Load saved monitor preference
         const savedMonitor = localStorage.getItem('ringApp_monitor');
         if (savedMonitor) {
@@ -143,7 +147,16 @@ class RingControlApp {
         
         // Populate monitor options if in Electron
         if (this.isElectron && window.electronAPI) {
+            console.log('Calling populateMonitorOptions...');
             this.populateMonitorOptions();
+        } else {
+            console.log('Not in Electron or ElectronAPI not available, using default options');
+            // Add default options for web version
+            this.monitorSelect.innerHTML = '';
+            const primaryOption = document.createElement('option');
+            primaryOption.value = 'primary';
+            primaryOption.textContent = 'Primary Display';
+            this.monitorSelect.appendChild(primaryOption);
         }
         
         this.monitorSelect.addEventListener('change', (e) => {
@@ -167,8 +180,13 @@ class RingControlApp {
 
     async populateMonitorOptions() {
         try {
+            console.log('Calling getDisplays...');
             const result = await window.electronAPI.getDisplays();
-            if (result.success && result.displays.length > 1) {
+            console.log('getDisplays result:', result);
+            
+            if (result.success) {
+                console.log(`Found ${result.displays.length} display(s):`, result.displays);
+                
                 // Clear existing options
                 this.monitorSelect.innerHTML = '';
                 
@@ -190,6 +208,7 @@ class RingControlApp {
                     option.value = `display_${index}`;
                     option.textContent = `Display ${index + 1} (${display.size.width}x${display.size.height})`;
                     this.monitorSelect.appendChild(option);
+                    console.log(`Added display option: Display ${index + 1} (${display.size.width}x${display.size.height})`);
                 });
                 
                 // Restore saved selection
@@ -198,6 +217,8 @@ class RingControlApp {
                 }
                 
                 console.log(`Populated monitor options with ${result.displays.length} display(s)`);
+            } else {
+                console.error('getDisplays failed:', result.error);
             }
         } catch (error) {
             console.error('Error populating monitor options:', error);
